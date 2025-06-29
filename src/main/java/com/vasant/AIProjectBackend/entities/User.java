@@ -1,22 +1,25 @@
 package com.vasant.AIProjectBackend.entities;
 
 import lombok.*;
-//import org.springframework.data.annotation.Id;
-//import org.springframework.data.mongodb.core.index.Indexed;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
+
+@Setter
+@Getter
+@Document(collection = "user_collection")
 public class User {
-//    @Id
-//    private Long id;
-//
-//    @Indexed(unique = true)
-//    @NonNull
-//    private String username;
-//
-//    @NonNull
-//    private String password;
-
     // getters and setters
+    @Id
+    private ObjectId id;
+
+    @Indexed(unique = true)
+    @NonNull
+    private String username;
+
+    @NonNull
+    private String password;
+
 }
