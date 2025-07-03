@@ -3,23 +3,33 @@ package com.vasant.AIProjectBackend.services;
 
 import com.vasant.AIProjectBackend.entities.User;
 import com.vasant.AIProjectBackend.repositories.UserEntryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class UserEntryService {
 
     @Autowired
     private UserEntryRepository userEntryRepository;
 
-    public void saveUser(User user) {
+    public void signup(User user) {
         try{
             userEntryRepository.save(user);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean signin(String email, String password) {
+        User user = userEntryRepository.findByEmailAndPassword(email, password);
+        log.info("User found: {}", user);
+        if (user != null && user.getPassword().equals(password) && user.getEmail().equals(email)) {
+            return true; // Sign-in successful
+        }
+
+        return false; // Sign-in failed
     }
 
     public Iterable<User> getAllUsers() {

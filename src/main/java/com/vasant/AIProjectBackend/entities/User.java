@@ -7,8 +7,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Setter
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "user_collection")
 public class User {
     // getters and setters
@@ -21,5 +22,8 @@ public class User {
 
     @NonNull
     private String password;
+
+    @NonNull
+    private String email;
 
 }

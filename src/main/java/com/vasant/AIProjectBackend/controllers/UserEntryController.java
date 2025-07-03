@@ -23,15 +23,15 @@ public class UserEntryController {
         return "Welcome to the AI Project Backend Login Page!";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
         Map<String, String> response = new HashMap<>();
         try {
-            userEntryService.saveUser(user);
+            userEntryService.signup(user);
             response.put("message", "User created successfully");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
-            response.put("message", "Failed to create user: " + e.getMessage());
+            response.put("message", "Failed to create user");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
@@ -55,5 +55,18 @@ public class UserEntryController {
         }
         response.put("message", "Welcome back " + userResponse.getUsername() + "!");
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/signin/{email}/{password}")
+    public ResponseEntity<Map<String, String>> signin(@PathVariable String email, @PathVariable String password) {
+        boolean isSignedIn = userEntryService.signin(email, password);
+        Map<String, String> response = new HashMap<>();
+        if (isSignedIn) {
+            response.put("message", "Sign-in successful");
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        } else {
+            response.put("message", "Sign-in failed: Invalid email or password");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
     }
 }
