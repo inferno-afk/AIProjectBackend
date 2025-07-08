@@ -1,10 +1,15 @@
 package com.vasant.AIProjectBackend.controllers;
 
 import com.vasant.AIProjectBackend.entities.User;
+import com.vasant.AIProjectBackend.io.ProfileRequest;
+import com.vasant.AIProjectBackend.io.ProfileResponse;
+import com.vasant.AIProjectBackend.services.EmailService;
 import com.vasant.AIProjectBackend.services.UserEntryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,6 +22,9 @@ public class UserEntryController {
 
     @Autowired
     private UserEntryService userEntryService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/greet")
     public String greet(){
@@ -68,5 +76,18 @@ public class UserEntryController {
             response.put("message", "Sign-in failed: Invalid email or password");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProfileResponse register(@Valid @RequestBody ProfileRequest profileRequest) {
+        ProfileResponse profileResponse = userEntryService.createProfile(profileRequest);
+        emailService.sendWelcomeEmail(profileResponse.getEmail(), profileResponse.getName());
+        return profileResponse;
+    }
+
+    @GetMapping("/profile")
+    public ProfileResponse getProfile(@CurrentSecurityContext(expression = "authentication?.name") String email){
+        return userEntryService.getProfile(email);
     }
 }
